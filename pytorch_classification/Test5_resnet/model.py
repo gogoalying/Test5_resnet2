@@ -1,9 +1,9 @@
 import torch.nn as nn
 import torch
 
-
+# 34层
 class BasicBlock(nn.Module):
-    expansion = 1
+    expansion = 1#检验残差结构卷积核个数是否一样
 
     def __init__(self, in_channel, out_channel, stride=1, downsample=None, **kwargs):
         super(BasicBlock, self).__init__()
@@ -27,13 +27,13 @@ class BasicBlock(nn.Module):
 
         out = self.conv2(out)
         out = self.bn2(out)
-
+        # 输出＋残差再relu激活
         out += identity
         out = self.relu(out)
 
         return out
 
-
+# 50，101，102层
 class Bottleneck(nn.Module):
     """
     注意：原论文中，在虚线残差结构的主分支上，第一个1x1卷积层的步距是2，第二个3x3卷积层步距是1。

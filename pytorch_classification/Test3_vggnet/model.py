@@ -10,18 +10,18 @@ model_urls = {
 }
 
 
-class VGG(nn.Module):
+class VGG(nn.Module):#定义网络结构VGG继承父类moudle
     def __init__(self, features, num_classes=1000, init_weights=False):
         super(VGG, self).__init__()
         self.features = features
-        self.classifier = nn.Sequential(
-            nn.Linear(512*7*7, 4096),
+        self.classifier = nn.Sequential(#展平之后进行全连接分类
+            nn.Linear(512*7*7, 2048),
             nn.ReLU(True),
             nn.Dropout(p=0.5),
-            nn.Linear(4096, 4096),
+            nn.Linear(2048, 2048),
             nn.ReLU(True),
             nn.Dropout(p=0.5),
-            nn.Linear(4096, num_classes)
+            nn.Linear(2048, num_classes)
         )
         if init_weights:
             self._initialize_weights()
@@ -30,12 +30,12 @@ class VGG(nn.Module):
         # N x 3 x 224 x 224
         x = self.features(x)
         # N x 512 x 7 x 7
-        x = torch.flatten(x, start_dim=1)
+        x = torch.flatten(x, start_dim=1) #展平处理从第一个维度
         # N x 512*7*7
         x = self.classifier(x)
         return x
 
-    def _initialize_weights(self):
+    def _initialize_weights(self): #初始化函数
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 # nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -48,7 +48,7 @@ class VGG(nn.Module):
                 nn.init.constant_(m.bias, 0)
 
 
-def make_features(cfg: list):
+def make_features(cfg: list): # 提取特征，对应vgg网络参数features
     layers = []
     in_channels = 3
     for v in cfg:
@@ -56,9 +56,9 @@ def make_features(cfg: list):
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
         else:
             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
-            layers += [conv2d, nn.ReLU(True)]
+            layers += [conv2d, nn.ReLU(True)] # 所有卷积层都是用Relu激活函数 所以讲刚刚定义好的卷积层链接激活函数
             in_channels = v
-    return nn.Sequential(*layers)
+    return nn.Sequential(*layers)#以非关键字函数传入
 
 
 cfgs = {
@@ -69,9 +69,9 @@ cfgs = {
 }
 
 
-def vgg(model_name="vgg16", **kwargs):
+def vgg(model_name="vgg16", **kwargs): #实例化vgg
     assert model_name in cfgs, "Warning: model number {} not in cfgs dict!".format(model_name)
     cfg = cfgs[model_name]
 
-    model = VGG(make_features(cfg), **kwargs)
+    model = VGG(make_features(cfg), **kwargs)#传入参数。
     return model

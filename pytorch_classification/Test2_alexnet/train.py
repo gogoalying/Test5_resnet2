@@ -30,7 +30,7 @@ def main():
     image_path = os.path.join(data_root, "data_set", "flower_data")  # flower data set path
     assert os.path.exists(image_path), "{} path does not exist.".format(image_path)
     train_dataset = datasets.ImageFolder(root=os.path.join(image_path, "train"),
-                                         transform=data_transform["train"])
+                                         transform=data_transform["train"])#傳入數據集
     train_num = len(train_dataset)
 
     # {'daisy':0, 'dandelion':1, 'roses':2, 'sunflower':3, 'tulips':4}
@@ -42,7 +42,7 @@ def main():
         json_file.write(json_str)
 
     batch_size = 32
-    nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])  # number of workers
+    nw = 4  # number of workers
     print('Using {} dataloader workers every process'.format(nw))
 
     train_loader = torch.utils.data.DataLoader(train_dataset,
@@ -91,8 +91,8 @@ def main():
             optimizer.zero_grad()
             outputs = net(images.to(device))
             loss = loss_function(outputs, labels.to(device))
-            loss.backward()
-            optimizer.step()
+            loss.backward()#反向傳播損失
+            optimizer.step()#更新結點參數
 
             # print statistics
             running_loss += loss.item()
@@ -104,7 +104,7 @@ def main():
         # validate
         net.eval()
         acc = 0.0  # accumulate accurate number / epoch
-        with torch.no_grad():
+        with torch.no_grad():#禁止參數進行跟蹤
             val_bar = tqdm(validate_loader, file=sys.stdout)
             for val_data in val_bar:
                 val_images, val_labels = val_data
