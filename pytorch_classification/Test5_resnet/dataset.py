@@ -74,33 +74,34 @@ class TestM(data.Dataset):#main
     def __len__(self):
         return len(self.imgs)
 
-# # 步骤3：设置图像转换操作
-# data_transform = {
-#     "train": transforms.Compose([transforms.RandomResizedCrop(224),
-#                                  transforms.RandomHorizontalFlip(),
-#                                  transforms.ToTensor(),
-#                                  transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]),
-#     "val": transforms.Compose([transforms.Resize(256),
-#                                transforms.CenterCrop(224),
-#                                transforms.ToTensor(),
-#                                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
-# # 步骤4：创建TestM实例
-# test_dataset = TestM(data_transform["train"])
-#
-# # 步骤5：访问数据
-# image, age= test_dataset[0]
-# print(f"First image: {image.shape}, Age: {age}")
-#
-#
-# # 假设test_dataset是你的数据集实例
-#
-# # 随机选择一个索引
-# index = 0
-#
-# # 获取图像和标签
-# image, age= test_dataset[index]
-# # 可视化图像
-# plt.imshow(image.permute(1, 2, 0))  # 转换为(H, W, C)的顺序
-# plt.title(f"Age: {age}")
-# plt.axis('off')
-# plt.show()
+def main():
+    # 步骤3：设置图像转换操作
+    data_transform = {
+        "train": transforms.Compose([transforms.RandomResizedCrop(224),
+                                     transforms.RandomHorizontalFlip(),
+                                     transforms.ToTensor(),
+                                     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]),
+        "val": transforms.Compose([transforms.Resize(256),
+                                   transforms.CenterCrop(224),
+                                   transforms.ToTensor(),
+                                   transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])}
+    # 步骤4：创建TestM实例
+    test_dataset = TestM(data_transform["train"])
+
+    # 步骤5：访问数据
+    image, age= test_dataset[0]
+    print(f"First image: {image.shape}, Age: {age}")
+
+
+    # 假设test_dataset是你的数据集实例
+
+    # 随机选择一个索引
+    index = 0
+
+    # 获取图像和标签
+    image, age= test_dataset[index]
+    # 可视化图像
+    plt.imshow(image.permute(1, 2, 0))  # 转换为(H, W, C)的顺序
+    plt.title(f"Age: {age}")
+    plt.axis('off')
+    plt.show()

@@ -113,6 +113,11 @@ class ResNet(nn.Module):
         if self.include_top:
             self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  # output size = (1, 1)
             self.fc = nn.Linear(512 * block.expansion, num_classes)
+            self.fc1 = nn.Linear(512 * block.expansion, 61)
+            # nn.init.xavier_uniform_(self.fc.weight)  # 使用 Xavier 初始化权重
+            # nn.init.constant_(self.fc.bias, 0)  # 将偏置项初始化为常数 0
+            # nn.init.xavier_uniform_(self.fc1.weight)  # 使用 Xavier 初始化权重
+            # nn.init.constant_(self.fc1.bias, 0)  # 将偏置项初始化为常数 0
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -148,6 +153,8 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
+        a = x1 = None
+
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
@@ -155,10 +162,12 @@ class ResNet(nn.Module):
 
         if self.include_top:
             x = self.avgpool(x)
-            x = torch.flatten(x, 1)
-            x = self.fc(x)
-
-        return x
+            a = torch.flatten(x, 1)
+            x = self.fc(a)
+            x1 = self.fc1(a)
+            x = nn.functional.softmax(x, dim=1)
+            x1 = nn.functional.softmax(x1, dim=1)
+        return x, x1
 
 
 def resnet34(num_classes=1000, include_top=True):

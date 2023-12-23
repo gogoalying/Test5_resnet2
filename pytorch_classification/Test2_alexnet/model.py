@@ -29,6 +29,7 @@ class AlexNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(2048, num_classes),
         )
+        # 权重初始化
         if init_weights:
             self._initialize_weights()
 
